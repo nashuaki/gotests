@@ -66,10 +66,10 @@ var (
 	// nosubtests is always set to default value of true when Go < 1.7.
 	// When >= Go 1.7 the default value is changed to false by the
 	// flag.BoolVar but can be overridden by setting nosubtests to true
-	nosubtests = true
+	nosubtests = false
 
 	// parallel is default false.
-	parallel bool
+	parallel = true
 
 	// use map instead of slice for table tests.
 	named bool
