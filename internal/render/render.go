@@ -7,6 +7,7 @@ import (
 	"path"
 	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/cweill/gotests/internal/models"
 	"github.com/cweill/gotests/internal/render/bindata"
 	"github.com/cweill/gotests/templates"
@@ -17,14 +18,18 @@ type Render struct {
 }
 
 func New() *Render {
+	funcmap := map[string]interface{}{
+		"Field":    fieldName,
+		"Receiver": receiverName,
+		"Param":    parameterName,
+		"Want":     wantName,
+		"Got":      gotName,
+	}
+	for k, v := range sprig.FuncMap() {
+		funcmap[k] = v
+	}
 	r := Render{
-		tmpls: template.New("render").Funcs(map[string]interface{}{
-			"Field":    fieldName,
-			"Receiver": receiverName,
-			"Param":    parameterName,
-			"Want":     wantName,
-			"Got":      gotName,
-		}),
+		tmpls: template.New("render").Funcs(funcmap),
 	}
 
 	// default templates first
@@ -104,7 +109,8 @@ func (r *Render) TestFunction(
 	subtests bool,
 	named bool,
 	parallel bool,
-	params map[string]interface{}) error {
+	params map[string]interface{},
+) error {
 	return r.tmpls.ExecuteTemplate(w, "function", struct {
 		*models.Function
 		PrintInputs    bool
